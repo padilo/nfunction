@@ -1,0 +1,26 @@
+package net.pdiaz.function;
+
+import java.lang.FunctionalInterface;
+
+    /*
+        index: $index
+        generics: $generics
+        generic: $generic
+
+    */
+
+@FunctionalInterface
+public interface Function${context.i}<${context.generics}, R>  {
+
+    R apply(
+    #foreach ($i in [1..$context.i])
+        T$i param$i
+
+        #if ($i < $context.i)
+            ,
+        #end
+
+    #end
+    );
+
+}
