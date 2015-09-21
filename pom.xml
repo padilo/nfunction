@@ -27,6 +27,15 @@
         <developerConnection>scm:git:git@github.com:padilo/nfunction-maven-plugin.git</developerConnection>
     </scm>
 
+    <developers>
+        <developer>
+            <id>padilo</id>
+            <name>Pablo Díaz López</name>
+            <email>padilo@gmail.com</email>
+            <timezone>Europe/Madrid</timezone>
+        </developer>
+    </developers>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>8</maven.compiler.target>
