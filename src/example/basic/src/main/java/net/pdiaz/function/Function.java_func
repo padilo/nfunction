@@ -3,10 +3,7 @@ package net.pdiaz.function;
 import java.lang.FunctionalInterface;
 
     /*
-        index: $index
-        generics: $generics
-        generic: $generic
-
+        context: $context
     */
 
 @FunctionalInterface
@@ -19,7 +16,6 @@ public interface Function${context.i}<${context.generics}, R>  {
         #if ($i < $context.i)
             ,
         #end
-
     #end
     );
 
