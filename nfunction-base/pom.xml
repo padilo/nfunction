@@ -4,6 +4,7 @@
 
     <artifactId>nfunction-base</artifactId>
     <name>nFunction Base</name>
+    <packaging>jar</packaging>
 
     <parent>
         <groupId>net.pdiaz.nfunction</groupId>

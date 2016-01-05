@@ -2,15 +2,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.pdiaz.nfunction</groupId>
     <artifactId>nfunction-maven-plugin</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
 
     <packaging>maven-plugin</packaging>
 
     <name>nFunction Maven Plugin</name>
     <description>Maven plugin to create function with N parameters based on a template</description>
     <url>http://nfunction.pdiaz.net</url>
+
+    <parent>
+        <groupId>net.pdiaz.nfunction</groupId>
+        <artifactId>nfunction</artifactId>
+        <relativePath>..</relativePath>
+        <version>0.1.1-SNAPSHOT</version>
+    </parent>
 
     <licenses>
         <license>
@@ -24,7 +29,7 @@
         <connection>scm:git:git@github.com:padilo/nfunction-maven-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:padilo/nfunction-maven-plugin.git</developerConnection>
       <tag>HEAD</tag>
-  </scm>
+    </scm>
 
     <developers>
         <developer>
@@ -34,12 +39,6 @@
             <timezone>Europe/Madrid</timezone>
         </developer>
     </developers>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.target>8</maven.compiler.target>
-        <maven.compiler.source>8</maven.compiler.source>
-    </properties>
 
     <distributionManagement>
         <snapshotRepository>
@@ -88,6 +87,7 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -103,6 +103,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
 
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
@@ -150,9 +151,14 @@
             <version>2.4</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
-            <version>1.7</version>
+            <groupId>net.pdiaz.nfunction</groupId>
+            <artifactId>nfunction-base</artifactId>
+            <version>0.1.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>net.pdiaz.nfunction</groupId>
+            <artifactId>nfunction-velocity</artifactId>
+            <version>0.1.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

@@ -1,5 +1,10 @@
 package net.pdiaz.nfunction;
 
+import net.pdiaz.nfunction.base.FunctionInfo;
+import net.pdiaz.nfunction.base.Generator;
+import net.pdiaz.nfunction.base.Parser;
+import net.pdiaz.nfunction.velocity.VelocityParser;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
@@ -17,11 +22,9 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Collection;
-import java.util.Properties;
 
 /**
  * Created by pablo on 9/20/15.
@@ -47,35 +50,37 @@ public class GenerateNFunctionsMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        addSourceRoot();
+        addGeneratedAsSource();
 
         String sourceFolderStr = project.getBuild().getSourceDirectory();
-        File sourceFolder = new File(sourceFolderStr);
-        int sourceFolderChars = sourceFolderStr.length() + 1;
         String encoding = project.getProperties().getProperty("project.build.sourceEncoding");
 
+        scanAndGenerateFunctions(sourceFolderStr, encoding);
+
+        log.info("End");
+    }
+
+    private void scanAndGenerateFunctions(String sourceFolderStr, String encoding) throws MojoExecutionException {
         if(StringUtils.isBlank(encoding)) {
-            throw new RuntimeException("encoding must be set via project property: project.build.sourceEncoding");
+            throw new MojoExecutionException("encoding must be set via project property: project.build.sourceEncoding");
         }
 
         try {
-            RegexFileFilter filefilter = new RegexFileFilter("^.*" + extension + "$");
-            Collection<File> files = FileUtils.listFiles(sourceFolder, filefilter, DirectoryFileFilter.DIRECTORY);
+            int sourceFolderChars = sourceFolderStr.length() + 1;
+            File sourceFolder = new File(sourceFolderStr);
+            RegexFileFilter fileFilter = new RegexFileFilter("^.*" + extension + "$");
+            Collection<File> files = FileUtils.listFiles(sourceFolder, fileFilter, DirectoryFileFilter.DIRECTORY);
 
             for (File file : files) {
-                String classBaseName = extractClassBaseName(file);
-
                 log.info("Found " + file.getAbsolutePath());
                 String packagePath = file.getParentFile().getAbsolutePath().substring(sourceFolderChars);
 
-                generateFunctions(classBaseName, packagePath, new File(project.getBasedir(), sourceOutputDir), file, encoding);
+                generateFunctions(packagePath, new File(project.getBasedir(), sourceOutputDir), file, encoding);
             }
 
         } catch (IOException e) {
             throw new MojoExecutionException("Error reading folder", e);
         }
-
-        log.info("End");
     }
 
     private String extractClassBaseName(File file) {
@@ -90,46 +95,19 @@ public class GenerateNFunctionsMojo extends AbstractMojo {
         return filename.substring(0, index-1);
     }
 
-    private void addSourceRoot() {
+    private void addGeneratedAsSource() {
         project.addCompileSourceRoot(sourceOutputDir);
     }
 
-    private void generateFunctions(String classBaseName, String packagePath, File outputFolder, File file, String encoding) throws IOException {
-        File outputDir = new File(outputFolder, packagePath);
-        String outputBase = outputDir + File.separator + classBaseName;
+    private void generateFunctions(String packagePath, File outputFolder, File file, String encoding) throws IOException {
+        String classBaseName = extractClassBaseName(file);
+        Generator generator = new Generator(new File(outputFolder, packagePath));
+        Parser parser = new VelocityParser(file, encoding);
 
-        outputDir.mkdirs();
-
-        Properties props = new Properties();
-
-        props.put("file.resource.loader.path", file.getParent());
-        props.put("input.encoding", encoding);
-        props.put("output.encoding",encoding);
-
-        VelocityEngine engine = new VelocityEngine(props);
-        engine.init();
-
-        Template t = engine.getTemplate(file.getName());
-
-        String generics = "";
-
-        for(int i=1; i<=num; i++) {
-            VelocityContext context = new VelocityContext();
-
-            if(generics.equals("")){
-                generics = genericName + i;
-            } else {
-                generics += ", " + genericName + i;
-            }
-
-            FunctionInfo functionInfo = new FunctionInfo(i, num, genericName + i, generics);
-
-            context.put("context", functionInfo);
-
-            try(Writer writer = new FileWriter(new File(outputBase + i + ".java"))) {
-                t.merge(context, writer);
-            }
+        for(FunctionInfo functionInfo: FunctionInfo.iterable(num, genericName)) {
+            parser.parse(classBaseName, generator, functionInfo);
         }
+
         log.info("Generated " + classBaseName + "[1.." + num + "].java");
 
     }

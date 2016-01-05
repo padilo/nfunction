@@ -1,4 +1,6 @@
-package net.pdiaz.nfunction;
+package net.pdiaz.nfunction.base;
+
+import java.util.Iterator;
 
 /**
  * Created by pablo on 9/20/15.
@@ -12,7 +14,11 @@ public class FunctionInfo {
     private final String generics;
     private final boolean last;
 
-    public FunctionInfo(int i, int num, String generic, String generics) {
+    private FunctionInfo(int num, String generic) {
+        this(0, num, generic, "");
+    }
+
+    private FunctionInfo(int i, int num, String generic, String generics) {
         this.i = i;
         this.num = num;
         this.generic = generic;
@@ -61,5 +67,36 @@ public class FunctionInfo {
                 ", generics='" + generics + '\'' +
                 ", last=" + last +
                 '}';
+    }
+
+    FunctionInfo next() {
+        int nextI = i+1;
+        String nextGenerics = generics.equals("")? generic + nextI: generics + ", " + generic + nextI;
+
+        return new FunctionInfo(nextI, num, generic, nextGenerics);
+    }
+
+    public static Iterable<FunctionInfo> iterable(int num, final String genericName) {
+        return () -> new FunctionInfoIterator(num, genericName);
+    }
+
+    public static class FunctionInfoIterator implements Iterator<FunctionInfo> {
+        private FunctionInfo functionInfo;
+
+        private FunctionInfoIterator(int num, String genericName) {
+            this.functionInfo = new FunctionInfo(num, genericName);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !functionInfo.isLast();
+        }
+
+        @Override
+        public FunctionInfo next() {
+            functionInfo = functionInfo.next();
+
+            return functionInfo;
+        }
     }
 }
