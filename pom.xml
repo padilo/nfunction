@@ -9,9 +9,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>nfunction-maven</module>
-        <module>nfunction-base</module>
-        <module>nfunction-velocity</module>
+        <module>maven</module>
+        <module>base</module>
+        <module>velocity</module>
+        <module>simple</module>
     </modules>
 
     <properties>
