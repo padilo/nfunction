@@ -3,6 +3,7 @@ package net.pdiaz.nfunction;
 import net.pdiaz.nfunction.base.FunctionInfo;
 import net.pdiaz.nfunction.base.Generator;
 import net.pdiaz.nfunction.base.Parser;
+import net.pdiaz.nfunction.simple.SimpleParser;
 import net.pdiaz.nfunction.velocity.VelocityParser;
 
 import org.apache.commons.io.FileUtils;
@@ -47,6 +48,9 @@ public class GenerateNFunctionsMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "T")
     private String genericName;
+
+    @Parameter(defaultValue = "velocity")
+    private String type;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -102,7 +106,7 @@ public class GenerateNFunctionsMojo extends AbstractMojo {
     private void generateFunctions(String packagePath, File outputFolder, File file, String encoding) throws IOException {
         String classBaseName = extractClassBaseName(file);
         Generator generator = new Generator(new File(outputFolder, packagePath));
-        Parser parser = new VelocityParser(file, encoding);
+        Parser parser = buildParser(file, encoding);
 
         for(FunctionInfo functionInfo: FunctionInfo.iterable(num, genericName)) {
             parser.parse(classBaseName, generator, functionInfo);
@@ -110,5 +114,14 @@ public class GenerateNFunctionsMojo extends AbstractMojo {
 
         log.info("Generated " + classBaseName + "[1.." + num + "].java");
 
+    }
+
+    private Parser buildParser(File file, String encoding) {
+        switch(type) {
+            case "velocity":
+                return new VelocityParser(file, encoding);
+            case "simple":
+                return new SimpleParser(file, encoding);
+        }
     }
 }

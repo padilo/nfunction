@@ -21,4 +21,29 @@
         <maven.compiler.source>8</maven.compiler.source>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>net.pdiaz.nfunction</groupId>
+                <artifactId>nfunction-base</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.pdiaz.nfunction</groupId>
+                <artifactId>nfunction-maven-plugin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.pdiaz.nfunction</groupId>
+                <artifactId>nfunction-simple</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.pdiaz.nfunction</groupId>
+                <artifactId>nfunction-velocity</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 </project>
